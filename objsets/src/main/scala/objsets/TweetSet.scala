@@ -11,7 +11,7 @@ class Tweet(val user: String, val text: String, val retweets: Int) {
     "User: " + user + "\n" +
     "Text: " + text + " [" + retweets + "]"
 
-  def max(that: Tweet): Tweet = {
+  def maxRetweets(that: Tweet): Tweet = {
     if (retweets > that.retweets) this
     else that
   }
@@ -60,9 +60,10 @@ abstract class TweetSet {
    * Question: Should we implment this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
-   def union(that: TweetSet): TweetSet = filterAcc(_ => true, that)
+  def union(that: TweetSet): TweetSet = filterAcc(_ => true, that)
 
-   def isEmpty: Boolean
+  def isEmpty: Boolean
+
   /**
    * Returns the tweet from this set which has the greatest retweet count.
    *
@@ -122,6 +123,7 @@ class Empty extends TweetSet {
   def isEmpty: Boolean = true
 
   def mostRetweeted: Tweet = throw new NoSuchElementException
+
   /**
    * The following methods are already implemented
    */
@@ -145,9 +147,9 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
 
   def mostRetweeted: Tweet = {
     if (left.isEmpty && right.isEmpty) elem
-    else if (left.isEmpty) elem.max(right.mostRetweeted)
-    else if (right.isEmpty) elem.max(left.mostRetweeted)
-    else elem.max(left.mostRetweeted.max(right.mostRetweeted))
+    else if (left.isEmpty) elem.maxRetweets(right.mostRetweeted)
+    else if (right.isEmpty) elem.maxRetweets(left.mostRetweeted)
+    else elem.maxRetweets(left.mostRetweeted.maxRetweets(right.mostRetweeted))
   }
 
   /**
